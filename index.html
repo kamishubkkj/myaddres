@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demonstração de Segurança</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: #1e1e1e;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            text-align: center;
+            max-width: 450px;
+            border: 1px solid #ff3333;
+        }
+        h1 { color: #ff3333; margin-bottom: 5px; }
+        p { color: #aaaaaa; font-size: 14px; }
+        .info-box {
+            background-color: #2a2a2a;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            text-align: left;
+        }
+        .info-item { margin: 10px 0; font-size: 16px; }
+        .label { font-weight: bold; color: #00ffcc; }
+        .loading { color: #ffcc00; font-style: italic; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Alerta de Privacidade</h1>
+    <p>Apenas por carregar esta página, veja o que qualquer site descobre sobre você instantaneamente:</p>
+    
+    <div class="info-box">
+        <div class="info-item"><span class="label">Seu IP:</span> <span id="ip" class="loading">Carregando...</span></div>
+        <div class="info-item"><span class="label">Cidade:</span> <span id="cidade" class="loading">Carregando...</span></div>
+        <div class="info-item"><span class="label">Estado/Região:</span> <span id="estado" class="loading">Carregando...</span></div>
+        <div class="info-item"><span class="label">País:</span> <span id="pais" class="loading">Carregando...</span></div>
+        <div class="info-item"><span class="label">Provedor (Internet):</span> <span id="provedor" class="loading">Carregando...</span></div>
+    </div>
+</div>
+
+<script>
+    // Sistema duplo de busca otimizado para servidores web públicos
+    fetch('https://ipify.org')
+        .then(res => res.json())
+        .then(ipData => {
+            document.getElementById('ip').textContent = ipData.ip;
+            return fetch(`https://ipapi.co{ipData.ip}/json/`);
+        })
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById('cidade').textContent = data.city || "Não detectada";
+            document.getElementById('estado').textContent = data.region || "Não detectado";
+            document.getElementById('pais').textContent = data.country_name || "Não detectado";
+            document.getElementById('provedor').textContent = data.org || "Não detectado";
+        })
+        .catch(err => {
+            console.error(err);
+            // Backup caso o ipapi falhe
+            document.getElementById('ip').textContent = "Erro ao carregar dados remotamente.";
+        });
+</script>
+
+</body>
+</html>
